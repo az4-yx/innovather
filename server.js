@@ -1,73 +1,36 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+
+const express = require('express');
+const crypto = require('crypto');
+const fs = require('fs');
 
 const app = express();
-app.use(bodyParser.json());
-app.use(cors());
+app.use(express.json());
 
-// In-memory storage
-const users = [
-  { username: "admin", password: bcrypt.hashSync("admin123", 10), role: "admin", vouchers: 0 },
-  { username: "user1", password: bcrypt.hashSync("user123", 10), role: "user", vouchers: 5 },
-];
+function hashPassword(password) {
+    return crypto.createHash('sha256').update(password).digest('hex');
+}
 
-const SECRET = "your_jwt_secret";
+// Load users from users.json
+const users = JSON.parse(fs.readFileSync('users.json'));
 
-// Route: Login
-app.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find((u) => u.username === username);
+// Handle login requests
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const hashedPassword = hashPassword(password);
 
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(401).json({ error: "Invalid username or password" });
-  }
-
-  const token = jwt.sign({ username: user.username, role: user.role }, SECRET, { expiresIn: "1h" });
-  res.json({ token, role: user.role });
+    const user = users.find(user => user.username === username && user.password === hashedPassword);
+    if (user) {
+        res.json({ success: true, role: user.role });
+    } else {
+        res.json({ success: false, message: 'Invalid username or password' });
+    }
 });
 
-// Route: Get Vouchers
-app.get("/vouchers", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
-
-  try {
-    const decoded = jwt.verify(token, SECRET);
-    const user = users.find((u) => u.username === decoded.username);
-
-    if (!user || user.role !== "user") return res.status(403).json({ error: "Forbidden" });
-
-    res.json({ vouchers: user.vouchers });
-  } catch {
-    res.status(401).json({ error: "Unauthorized" });
-  }
-});
-
-// Route: Add Vouchers (Admin Only)
-app.post("/add-vouchers", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
-
-  try {
-    const decoded = jwt.verify(token, SECRET);
-    const admin = users.find((u) => u.username === decoded.username && u.role === "admin");
-
-    if (!admin) return res.status(403).json({ error: "Forbidden" });
-
-    const { username, vouchersToAdd } = req.body;
-    const user = users.find((u) => u.username === username);
-
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    user.vouchers += vouchersToAdd;
-    res.json({ message: `Added ${vouchersToAdd} vouchers to ${username}.`, user });
-  } catch {
-    res.status(401).json({ error: "Unauthorized" });
-  }
-});
+// Serve static files (your website)
+app.use(express.static('public'));
 
 // Start the server
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
