@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Minimart System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="dashboard.html">Dashboard</a> |
+        <a href="categories.html">Categories</a> |
+        <a href="cart.html">Cart</a> |
+        <a href="index.html">Logout</a>
+    </nav>
+    <h2>Categories</h2>
+    <ul id="items-list">
+        <li>
+            Item 1 - $10 
+            <button onclick="addToCart('Item 1', 10)">Add to Cart</button>
+        </li>
+        <li>
+            Item 2 - $20
+            <button onclick="addToCart('Item 2', 20)">Add to Cart</button>
+        </li>
+        <li>
+            Item 3 - $15
+            <button onclick="addToCart('Item 3', 15)">Add to Cart</button>
+        </li>
+    </ul>
+
+    <script>
+        // Add an item to the cart with price
+        function addToCart(itemName, itemPrice) {
+    const currentUsername = "user1"; // Replace with dynamic username logic if available.
+    let users = JSON.parse(localStorage.getItem("users")) || []; // Retrieve users from localStorage
+
+    // Find the current user
+    let currentUser = users.find(user => user.username === currentUsername);
+
+    if (!currentUser) {
+        // If the user doesn't exist, initialize their data
+        currentUser = { username: currentUsername, cart: [], vouchers: [] };
+        users.push(currentUser);
+    }
+
+    // Add the item to the user's cart
+    currentUser.cart.push({ name: itemName, price: itemPrice });
+
+    // Save the updated users array back to localStorage
+    localStorage.setItem("users", JSON.stringify(users));
+
+    // Also update the standalone "cart" key if needed for other pages
+    localStorage.setItem("cart", JSON.stringify(currentUser.cart));
+
+    alert(`${itemName} has been added to your cart for $${itemPrice}.`);
+}
+
+    </script>
+</body>
+</html>

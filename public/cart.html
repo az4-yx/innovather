@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +9,172 @@
 <body>
     <nav>
         <a href="dashboard.html">Dashboard</a> |
-        <a href="category.html">Categories</a> |
+        <a href="categories.html">Categories</a> |
         <a href="cart.html">Cart</a> |
-        <a href="admin.html">Admin Panel</a> |
         <a href="index.html">Logout</a>
     </nav>
-    <h1>Your Shopping Cart</h1>
-    <p>No items in the cart yet.</p>
+    <h2>Your Shopping Cart</h2>
+
+    <table border="1" id="cart-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="cart-items">
+            <!-- Cart items will be dynamically added here -->
+        </tbody>
+    </table>
+    <p id="cart-message"></p>
+
+    <p><strong>Total Amount (Before Voucher):</strong> $<span id="total-amount">0.00</span></p>
+
+    <h3>Apply Voucher:</h3>
+    <select id="voucher-select" onchange="applyVoucher()">
+        <option value="">Select a Voucher</option>
+        <!-- Vouchers will be dynamically populated here -->
+    </select>
+    <p><strong>Total Amount (After Voucher):</strong> $<span id="total-after-voucher">0.00</span></p>
+
+    <script>
+        // Simulated vouchers (in a real app, these would come from the backend)
+        const vouchers = [
+            { code: "DISCOUNT10", amount: 10 },
+            { code: "DISCOUNT5", amount: 5 }
+        ];
+
+        // Load cart items from localStorage and populate the table
+        function loadCart() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartItems = document.getElementById("cart-items");
+    const cartMessage = document.getElementById("cart-message");
+    const totalAmountElement = document.getElementById("total-amount");
+    const voucherSelect = document.getElementById("voucher-select");
+
+    cartItems.innerHTML = ""; // Clear previous items
+    let totalAmount = 0;
+
+    if (cart.length === 0) {
+        cartMessage.innerText = "No items in the cart yet.";
+    } else {
+        cartMessage.innerText = "";
+        const itemMap = new Map();
+
+        // Count quantities for each item
+        cart.forEach((item, index) => {
+            if (itemMap.has(item.name)) {
+                itemMap.get(item.name).quantity += 1;
+                itemMap.get(item.name).indices.push(index);
+            } else {
+                itemMap.set(item.name, { price: item.price, quantity: 1, indices: [index] });
+            }
+        });
+
+        // Populate the table with items
+        itemMap.forEach((value, key) => {
+            const tr = document.createElement("tr");
+
+            const itemNameTd = document.createElement("td");
+            itemNameTd.textContent = key;
+            tr.appendChild(itemNameTd);
+
+            const quantityTd = document.createElement("td");
+            quantityTd.textContent = value.quantity;
+            tr.appendChild(quantityTd);
+
+            const priceTd = document.createElement("td");
+            priceTd.textContent = `$${(value.price * value.quantity).toFixed(2)}`;
+            tr.appendChild(priceTd);
+
+            const actionTd = document.createElement("td");
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.onclick = () => removeItem(key, value.indices[0]); // Pass the item name and its first index
+            actionTd.appendChild(removeButton);
+            tr.appendChild(actionTd);
+
+            cartItems.appendChild(tr);
+            totalAmount += value.price * value.quantity;
+        });
+    }
+
+    // Update the total amount
+    totalAmountElement.innerText = totalAmount.toFixed(2);
+
+    // Populate the voucher dropdown
+    voucherSelect.innerHTML = '<option value="">Select a Voucher</option>';
+    vouchers.forEach(voucher => {
+        const option = document.createElement("option");
+        option.value = voucher.amount;
+        option.textContent = `${voucher.code} - $${voucher.amount} off`;
+        voucherSelect.appendChild(option);
+    });
+
+    // Set the total after voucher to the initial total
+    document.getElementById("total-after-voucher").innerText = totalAmount.toFixed(2);
+}
+
+
+        // Apply the selected voucher to update the total amount
+        function applyVoucher() {
+    const voucherSelect = document.getElementById("voucher-select");
+    const voucherCode = voucherSelect.options[voucherSelect.selectedIndex].text.split(" - ")[0];
+    const voucherAmount = parseFloat(voucherSelect.value) || 0;
+    const totalAmount = parseFloat(document.getElementById("total-amount").innerText);
+
+    const totalAfterVoucher = Math.max(0, totalAmount - voucherAmount); // Ensure total isn't negative
+    document.getElementById("total-after-voucher").innerText = totalAfterVoucher.toFixed(2);
+
+    // Update the user's vouchers in localStorage
+    const currentUsername = "user1"; // Replace with dynamic username logic if needed
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    let currentUser = users.find(user => user.username === currentUsername);
+
+    if (!currentUser) {
+        // If the user doesn't exist, initialize their data
+        currentUser = { username: currentUsername, cart: [], vouchers: [] };
+        users.push(currentUser);
+    }
+
+    // Add the voucher to the user's vouchers list if it's not already there
+    if (!currentUser.vouchers.includes(voucherCode)) {
+        currentUser.vouchers.push(voucherCode);
+    }
+
+    // Save the updated users array back to localStorage
+    localStorage.setItem("users", JSON.stringify(users));
+}
+
+
+        // Remove an item from the cart
+        function removeItem(itemName, itemIndex) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(itemIndex, 1); // Remove the item from the cart by index
+
+    // Save the updated cart back to localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Optionally, also update the user data in localStorage
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const currentUser = users.find(user => user.username === "user1"); // Adjust as needed for your actual user session
+    if (currentUser) {
+        currentUser.cart = cart;
+        localStorage.setItem("users", JSON.stringify(users)); // Save back the updated user data
+    }
+
+    // Reload the cart in the current page
+    loadCart();
+
+    // Notify admin to update the data (you can call `loadAdminData` here to refresh the admin table)
+    loadAdminData();  // Refresh the admin table after cart update
+}
+
+
+        loadCart();
+    </script>
 </body>
 </html>

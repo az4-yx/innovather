@@ -1,13 +1,12 @@
-
 [
     {
         "username": "user1",
-        "password": "ef92b778bafee00f1276b2d3d23b09f3acb781b0d10c7f7b7d53ad06b6292b03",
+        "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
         "role": "user"
     },
     {
         "username": "admin1",
-        "password": "6c857a7e015f32d28f61c79f43b1f508a708f6bce89dbf251a8b04c4845a5569",
+        "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
         "role": "admin"
     }
 ]

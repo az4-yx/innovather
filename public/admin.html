@@ -1,21 +1,74 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Minimart System</title>
+    <title>Admin - Minimart System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
-        <a href="dashboard.html">Dashboard</a> |
-        <a href="category.html">Categories</a> |
-        <a href="cart.html">Cart</a> |
-        <a href="admin.html">Admin Panel</a> |
+        <a href="admin.html">Admin</a> |
         <a href="index.html">Logout</a>
     </nav>
-    <h1>Admin Panel</h1>
-    <p>Manage users, inventory, and voucher requests.</p>
+    <h2>Admin Panel</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Items in Cart</th>
+                <th>Vouchers</th>
+            </tr>
+        </thead>
+        <tbody id="admin-table">
+            <!-- Rows will be dynamically populated here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Load all user data and populate admin table
+        function loadAdminData() {
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const tableBody = document.getElementById("admin-table"); // Correct the ID here
+    
+            tableBody.innerHTML = ""; // Clear the table before reloading
+    
+            users.forEach(user => {
+                const tr = document.createElement("tr");
+    
+                // Username
+                const usernameTd = document.createElement("td");
+                usernameTd.textContent = user.username;
+                tr.appendChild(usernameTd);
+    
+                // Items in Cart
+                const cartTd = document.createElement("td");
+                // Check if cart is an array and join item names correctly
+                cartTd.textContent = user.cart && Array.isArray(user.cart) 
+                    ? user.cart.map(item => `${item.name} ($${item.price})`).join(", ") 
+                    : "No items";
+                tr.appendChild(cartTd);
+    
+                // Vouchers
+                const vouchersTd = document.createElement("td");
+                // Ensure vouchers are properly joined into a string
+                vouchersTd.textContent = user.vouchers && Array.isArray(user.vouchers) 
+                    ? user.vouchers.join(", ") 
+                    : "No vouchers";
+                tr.appendChild(vouchersTd);
+    
+                tableBody.appendChild(tr);
+            });
+        }
+    
+        // Update cart and voucher details in real time whenever they change
+        window.addEventListener("storage", () => {
+            loadAdminData(); // Reload data when any change is made to localStorage
+        });
+    
+        // Load admin data on page load
+        loadAdminData();
+    </script>
+    
 </body>
 </html>
