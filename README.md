@@ -83,7 +83,7 @@ innovather/
 │   ├── server.js           # Backend server setup
 │   ├── package.json        # Project metadata and dependencies
 │   ├── package-lock.json   # Lockfile for dependencies
-├── LICENSE                 # License file
+├── .gitignore              # Git ignore file
 ├── README.md               # Project documentation
 ```
 
