@@ -1,4 +1,4 @@
-# Innovather
+# innovather
 
 **Elevator Pitch:** A streamlined web-based minimart system designed to manage user carts, vouchers, and an admin panel, ensuring efficient shopping and management workflows.
 
@@ -17,7 +17,7 @@
 
 ## **Project Overview**
 
-Innovather is a minimart management system designed to simplify shopping and administrative tasks. Users can add items to their cart, use vouchers, and administrators can view all user activities through a dynamic admin panel.
+innovather is our team's project: a minimart management system designed to simplify shopping and administrative tasks. Users can add items to their cart, use vouchers, and administrators can view all user activities through a dynamic admin panel.
 
 ---
 
@@ -50,7 +50,7 @@ Innovather is a minimart management system designed to simplify shopping and adm
    ```
 2. Navigate to the project directory:
    ```bash
-   cd Innovather
+   cd innovather
    ```
 3. Install dependencies:
    ```bash
@@ -67,7 +67,7 @@ Innovather is a minimart management system designed to simplify shopping and adm
 ## **File Structure**
 
 ```
-Innovather/
+innovather/
 ├── code/
 │   ├── public/             # HTML, CSS, and JavaScript files
 │   ├── generateHashes.js   # Utility for generating hash values
