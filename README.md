@@ -119,7 +119,7 @@ innovather/
 
 ## **Inspiration**
 
-Our team, innovather, was inspired by the need to create a simplified e-commerce solution for users who enjoy online shopping but are often overwhelmed by complex systems. We wanted to build a system that is both easy to use and efficient, focusing on providing a smooth shopping experience. The project also gave us the opportunity to explore full-stack development with a real-world application.
+The system was designed and developed based on the problem statement from a NPO. The goal was to create a web-based Minimart and Voucher System that enables users to request products, earn vouchers, and provides admins with comprehensive management and reporting tools. The system ensures security and usability.
 
 ---
 
