@@ -12,7 +12,6 @@
 4. [File Structure](#file-structure)
 5. [Usage](#usage)
 6. [Technologies Used](#technologies-used)
-7. [License](#license)
 
 ---
 
@@ -108,11 +107,5 @@ Innovather/
   - JSON (for static user data and vouchers)
 - **Package Manager:**
   - npm
-
----
-
-## **License**
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
