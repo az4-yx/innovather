@@ -1,6 +1,3 @@
-Here's the entire content you asked for in Markdown format:
-
-```markdown
 # innovather
 
 **Elevator Pitch:** A streamlined web-based minimart system designed to manage user carts, vouchers, and an admin panel, ensuring efficient shopping and management workflows.
